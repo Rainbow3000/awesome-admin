@@ -1,4 +1,11 @@
-import type { TError, TLogin, TRegister, TResult, TUser, TUserInfo } from "@/common/type";
+import type {
+  TError,
+  TLogin,
+  TRegister,
+  TResult,
+  TUser,
+  TUserInfo,
+} from "@/common/type";
 import { useUserStore } from "@/stores/user";
 import { request } from "@/utils/request";
 import { AxiosError } from "axios";
@@ -142,7 +149,7 @@ export const useUser = () => {
         if (isArray(message)) {
           ElMessage.error(message[0]);
 
-          return false
+          return false;
         }
 
         ElMessage.error(message);
@@ -174,7 +181,37 @@ export const useUser = () => {
         const { message } = error.response?.data as TError;
 
         if (isArray(message)) {
-          ElMessage.error(message[0])
+          ElMessage.error(message[0]);
+
+          return false;
+        }
+
+        ElMessage.error(message);
+
+        return false;
+      }
+
+      ElMessage.error("Có lỗi xảy ra !");
+
+      return false;
+    }
+  };
+
+  const forgetPass = async (email: string) => {
+    try {
+      const response = await request.post("/auth/forget-pass", { email });
+
+      const { message } = response.data as TResult;
+
+      ElMessage.success(message);
+
+      return true;
+    } catch (error) {
+      if (error instanceof AxiosError) {
+        const { message } = error.response?.data as TError;
+
+        if (isArray(message)) {
+          ElMessage.error(message[0]);
 
           return false;
         }
@@ -199,5 +236,6 @@ export const useUser = () => {
     updateUserInfo,
     register,
     login,
+    forgetPass
   };
 };
